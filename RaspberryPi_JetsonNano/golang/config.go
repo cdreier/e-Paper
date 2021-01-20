@@ -55,11 +55,14 @@ func NewRaspi() *Raspi {
 	r.PinCS = rpio.Pin(8)
 	r.PinBUSY = rpio.Pin(24)
 
-	rpio.SpiBegin(rpio.Spi0)
+	err := rpio.SpiBegin(rpio.Spi0)
+	if err != nil {
+		log.Fatal("unable to begin SPI: ", err)
+	}
 	rpio.SpiSpeed(4000000)
 
 	// TODO
-	// rpio.SpiMode(cpol, cpha)
+	// rpio.SpiMode(1, 1)
 	// self.SPI.mode = 0b00
 
 	r.PinRST.Output()
