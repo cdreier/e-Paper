@@ -140,15 +140,18 @@ func (epd *EPD2in9) Display(img *image.Gray) {
 	}
 	epd.SetWindow(0, 0, epd.width-1, epd.height-1)
 
-	// buf := emptyBuffer(epd.width, epd.height)
-	buf := imgToByte(epd.width, epd.height, img)
+	imgBytes := imgToByte(epd.width, epd.height, img)
+	lineBuffer := make([]byte, int(epd.width/8))
 
 	for y := 0; y < epd.height; y++ {
 		epd.SetCursor(0, y)
 		epd.sendCommand(0x24) // WRITE_RAM
+
+		// sending line by line
 		for x := 0; x < int(epd.width/8); x++ {
-			epd.sendData(buf[x+y*(epd.width/8)])
+			lineBuffer[x] = imgBytes[x+y*(epd.width/8)]
 		}
+		epd.sendData(lineBuffer...)
 	}
 
 	epd.TurnOnDisplay()
@@ -176,16 +179,13 @@ func imgToByte(w, h int, img *image.Gray) []byte {
 	imgw := img.Rect.Size().X
 	imgh := img.Rect.Size().Y
 
-	blackPixels := 0
-
 	if imgw == w && imgh == h {
 		log.Println("VERTICAL")
 		for y := 0; y < imgh; y++ {
 			for x := 0; x < imgw; x++ {
 				grayColor := img.At(x, y).(color.Gray)
 				if grayColor.Y == 0 {
-					blackPixels++
-					buf[(x+y*w)/8] &= (0x80 >> (uint(x) % uint(8)))
+					buf[int((x+y*w)/8)] &= ^(0x80 >> (uint(x) % uint(8)))
 				}
 			}
 		}
@@ -197,13 +197,11 @@ func imgToByte(w, h int, img *image.Gray) []byte {
 				newy := h - x - 1
 				grayColor := img.At(newx, newy).(color.Gray)
 				if grayColor.Y == 0 {
-					buf[(newx+newy*w)/8] &= (0x80 >> (uint(h) % uint(8)))
+					buf[(newx+newy*w)/8] &= ^(0x80 >> (uint(h) % uint(8)))
 				}
 			}
 		}
 	}
-
-	log.Println("black pixels", blackPixels)
 
 	return buf
 }

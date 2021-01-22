@@ -61,8 +61,7 @@ func NewRaspi() *Raspi {
 	}
 	rpio.SpiSpeed(4000000)
 
-	// TODO
-	// rpio.SpiMode(1, 1)
+	rpio.SpiMode(0, 0)
 	// self.SPI.mode = 0b00
 
 	r.PinRST.Output()
@@ -72,14 +71,6 @@ func NewRaspi() *Raspi {
 
 	return r
 }
-
-// func (r *Raspi) DigitalWrite(pin rpio.Pin) {
-// 	pin.Output()
-// }
-
-// func (r *Raspi) DigitalRead(pin rpio.Pin) {
-// 	pin.Input()
-// }
 
 func (r *Raspi) DelayMS(ms int) {
 	time.Sleep(time.Duration(ms) * time.Millisecond)
