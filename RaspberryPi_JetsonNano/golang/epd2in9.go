@@ -195,7 +195,7 @@ func imgToByte(w, h int, img *image.Gray) []byte {
 			for x := 0; x < imgw; x++ {
 				newx := y
 				newy := h - x - 1
-				grayColor := img.At(newx, newy).(color.Gray)
+				grayColor := img.At(x, y).(color.Gray)
 				if grayColor.Y == 0 {
 					buf[(newx+newy*w)/8] &= ^(0x80 >> (uint(h) % uint(8)))
 				}
