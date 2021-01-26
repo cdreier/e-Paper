@@ -1,4 +1,4 @@
-module github.com/cdreier/e-Paper
+module github.com/cdreier/e-Paper/RaspberryPi_JetsonNano/golang
 
 go 1.15
 

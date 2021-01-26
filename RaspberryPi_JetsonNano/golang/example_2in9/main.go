@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	epaper "github.com/cdreier/e-Paper"
+	epaper "github.com/cdreier/e-Paper/RaspberryPi_JetsonNano/golang"
 )
 
 func main() {
